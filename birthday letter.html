@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="header">
+      <h1 id="title">Happy Birthday!</h1>
+      <p class="subtitle" id="subtitle">A special message for you</p>
+    </header>
+
+    <section class="message" id="message">
+      <p>Hey <span id="recipient">there</span> —</p>
+
+      <p id="para1">
+        Wishing you the happiest of birthdays. I hope this day brings you
+        laughter, love, and everything you've been wishing for. You make the
+        world brighter just by being you, and I'm so grateful for you every
+        single day.
+      </p>
+
+      <p id="memory">
+        Remember <em>that</em> time we <span id="memory-text">[add a quick memory or inside joke here]</span>? I still smile thinking about it. Here's to many more adventures and memories together in the year ahead.
+      </p>
+
+      <p class="wish" id="wish">
+        May this year bring you good health, bold new dreams, and small daily
+        joys. Celebrate loud or quietly — however you love — and know I'm
+        celebrating you today.
+      </p>
+
+      <p class="closing">With all my love,</p>
+      <p class="signature" id="signature">— [Your Name]</p>
+    </section>
+
+    <footer class="footer">
+      <div class="controls">
+        <label for="nameInput">Personalize name:</label>
+        <input id="nameInput" placeholder="Type name and press Enter" />
+        <button id="copyBtn">Copy shareable link</button>
+      </div>
+      <small class="hint">Tip: open this page with ?name=Sarah&from=Roshan to personalize automatically.</small>
+    </footer>
+  </main>
+
+  <script>
+    // Read ?name= and ?from= from URL and populate the letter
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function setRecipient(name) {
+      const recipientEl = document.getElementById('recipient');
+      const titleEl = document.getElementById('title');
+      const subtitleEl = document.getElementById('subtitle');
+      const signatureEl = document.getElementById('signature');
+
+      const display = name ? name : 'there';
+      recipientEl.textContent = display;
+      titleEl.textContent = `Happy Birthday, ${display}!`;
+      subtitleEl.textContent = `A special message for ${display}`;
+      const from = getQueryParam('from');
+      signatureEl.textContent = from ? `— ${from}` : '— [Your Name]';
+    }
+
+    // initialize
+    (function () {
+      const name = getQueryParam('name');
+      setRecipient(name);
+
+      // input for quick rename and update URL
+      const nameInput = document.getElementById('nameInput');
+      nameInput.value = name || '';
+      nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const val = nameInput.value.trim();
+          const url = new URL(window.location.href);
+          if (val) {
+            url.searchParams.set('name', val);
+          } else {
+            url.searchParams.delete('name');
+          }
+          window.history.replaceState({}, '', url.toString());
+          setRecipient(val);
+        }
+      });
+
+      // copy current URL to clipboard
+      const copyBtn = document.getElementById('copyBtn');
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          copyBtn.textContent = 'Link copied!';
+          setTimeout(() => (copyBtn.textContent = 'Copy shareable link'), 2000);
+        } catch (err) {
+          alert('Could not copy automatically. Manually copy the URL from the address bar.');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
